@@ -1,0 +1,35 @@
+.search-container {
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #eaeaec;
+}
+.search-container svg {
+  width: 18px;
+  height: 18px;
+  color: rgb(24, 49, 83);
+}
+.search-input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+.create-contact-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  padding: 10px 35px 0;
+}
+.create-contact-container svg {
+  width: 20px;
+  height: 20px;
+  color: rgb(24, 49, 83);
+  cursor: pointer;
+}
+.create-contact-container p {
+  color: rgb(24, 49, 83);
+}
