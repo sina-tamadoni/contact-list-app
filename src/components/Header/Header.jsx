@@ -1,5 +1,9 @@
+import { useContext } from "react";
 import "./Header.css";
-function Header({ setSwitchPage, searchedContact, setSearchedContact }) {
+import { MainContext } from "../../App";
+function Header() {
+  const { setSwitchPage, searchedContact, setSearchedContact } =
+    useContext(MainContext);
   return (
     <header>
       <div className="search-container">

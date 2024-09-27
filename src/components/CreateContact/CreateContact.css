@@ -183,12 +183,12 @@ select {
 }
 
 .photo-icon {
-  background: url(../src/assets/icons/image-regular.svg) center/cover no-repeat;
+  background: url(../../assets/icons/image-regular.svg) center/cover no-repeat;
   width: 50px;
   height: 50px;
 }
 .plus-icon {
-  background: url(../src/assets/icons/plus-solid.svg) center/cover no-repeat;
+  background: url(../../assets/icons/plus-solid.svg) center/cover no-repeat;
   width: 22px;
   height: 22px;
   position: absolute;

@@ -304,7 +304,8 @@ figure figcaption {
   display: inline-block;
   width: 25px;
   height: 25px;
-  background: url(../assets/icons/user-check-solid.svg) center/contain no-repeat;
+  background: url(../../assets/icons/user-check-solid.svg) center/contain
+    no-repeat;
 }
 .select-contact-items {
   display: flex;
@@ -329,7 +330,8 @@ figure figcaption {
   color: purple;
 }
 .list-check-icon {
-  background: url(../assets/icons/list-check-solid.svg) center/cover no-repeat;
+  background: url(../../assets/icons/list-check-solid.svg) center/cover
+    no-repeat;
   width: 17px;
   height: 17px;
   cursor: pointer;

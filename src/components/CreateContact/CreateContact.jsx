@@ -1,72 +1,39 @@
-import "./EditPage.css";
-import { useEffect, useState } from "react";
+import "./CreateContact.css";
+import { useContext, useEffect, useState } from "react";
 import { v4 } from "uuid";
-import irancell from "../assets/images/irancell.png";
-import hamraheAval from "../assets/images/hamrahaval.png";
-import rightel from "../assets/images/rightel.png";
+import irancell from "../../assets/images/irancell.png";
+import hamraheAval from "../../assets/images/hamrahaval.png";
+import rightel from "../../assets/images/rightel.png";
+import { MainContext } from "../../App";
+import {
+  hamrahPrefixes,
+  mtnPrefixes,
+  pattern,
+  rightelPrefixes,
+} from "../../constants/constants";
 
-function EditPage({
-  contacts,
-  setContacts,
-  setIsEditOpen,
-  setToast,
-  setIsToast,
-  selectedImage,
-  setSelectedImage,
-  editItemDetail,
-}) {
-  const pattern = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}";
+function CreateContact() {
+  const {
+    contacts,
+    setContacts,
+    setSwitchPage,
+    setToast,
+    setIsToast,
+    selectedImage,
+    setSelectedImage,
+  } = useContext(MainContext);
   const regexPattern = new RegExp(pattern);
   const [operator, setOperator] = useState(null);
-  const { id, name, phone, email, label, birthday } = editItemDetail;
-
   const [contact, setContact] = useState({
-    id: id,
-    name: name,
-    phone: phone,
-    email: email,
-    label: label,
-    birthday: birthday,
-    image: selectedImage,
+    name: "",
+    phone: "",
+    email: "",
+    label: "family",
+    birthday: "",
+    isSelected: false,
   });
-
   const [errors, setErrors] = useState({});
   function detectOperator(phone) {
-    const mtnPrefixes = [
-      "0930",
-      "0933",
-      "0935",
-      "0936",
-      "0937",
-      "0938",
-      "0939",
-      "0900",
-      "0901",
-      "0902",
-      "0903",
-      "0904",
-      "0905",
-      "0941",
-    ];
-    const hamrahPrefixes = [
-      "0910",
-      "0911",
-      "0912",
-      "0913",
-      "0914",
-      "0915",
-      "0916",
-      "0917",
-      "0918",
-      "0919",
-      "0990",
-      "0991",
-      "0992",
-      "0993",
-      "0994",
-      "0903",
-    ];
-    const rightelPrefixes = ["0920", "0921", "0922"];
     if (!phone || phone.length < 4) {
       setOperator(null);
     }
@@ -111,22 +78,26 @@ function EditPage({
     }
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
-      const newContacts = [...contacts];
-      const finded = newContacts.findIndex((contact) => contact.id === id);
-      const newContact = { ...contact, image: selectedImage };
-      newContacts[finded] = newContact;
-      setContacts(newContacts);
+      const newContact = { ...contact, id: v4(), image: selectedImage };
+      setContacts((prevContacts) => [...prevContacts, newContact]);
       localStorage.setItem("contacts", JSON.stringify(contacts));
+      setContact({
+        name: "",
+        phone: "",
+        email: "",
+        label: "family",
+        birthday: "",
+      });
       setToast(`${contact.name} added to your contact list `);
       setIsToast(true);
-      setIsEditOpen(false);
+      setSwitchPage(false);
     }
   }
   useEffect(() => {
     detectOperator(contact.phone);
   }, [contact.phone]);
   useEffect(() => {
-    setSelectedImage(selectedImage);
+    setSelectedImage(null);
   }, []);
 
   return (
@@ -141,7 +112,7 @@ function EditPage({
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
-            onClick={() => setIsEditOpen(false)}
+            onClick={() => setSwitchPage(false)}
           >
             <path
               strokeLinecap="round"
@@ -149,7 +120,7 @@ function EditPage({
               d="M6 18 18 6M6 6l12 12"
             ></path>
           </svg>
-          <h3>Edit contact</h3>
+          <h3>Create contact</h3>
         </div>
         <button onClick={saveContactHandler}>Save</button>
       </div>
@@ -254,6 +225,7 @@ function EditPage({
                 placeholder="Phone"
                 value={contact.phone}
                 onChange={changeHandler}
+                maxLength="11"
                 autoComplete="off"
               />
               {operator && <img src={operator} alt="" />}
@@ -368,4 +340,4 @@ function EditPage({
   );
 }
 
-export default EditPage;
+export default CreateContact;

@@ -1,7 +1,10 @@
+import { MainContext } from "../../App";
 import "./Toast.css";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 
-function Toast({ toast, setToast, selectedImage, isToast, setIsToast }) {
+function Toast() {
+  const { toast, setToast, selectedImage, isToast, setIsToast } =
+    useContext(MainContext);
   useEffect(() => {
     setTimeout(() => {
       setToast(null);

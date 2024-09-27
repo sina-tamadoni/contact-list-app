@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import "./App.css";
-import Header from "./components/Header";
-import CreateContact from "./components/CreateContact";
-import Contacts from "./components/Contacts";
-import Toast from "./components/Toast";
-import EditPage from "./components/EditPage";
+import Header from "./components/Header/Header";
+import CreateContact from "./components/CreateContact/CreateContact";
+import Contacts from "./components/Contacts/Contacts";
+import Toast from "./components/Toast/Toast";
+import EditPage from "./components/EditPage/EditPage";
+
+export const MainContext = createContext();
 
 function App() {
   const [switchPage, setSwitchPage] = useState(false);
@@ -48,53 +50,40 @@ function App() {
   }, [searchedContact]);
 
   return (
-    <div className="container">
-      {isEditOpen ? (
-        <EditPage
-          contacts={contacts}
-          setContacts={setContacts}
-          setSwitchPage={setSwitchPage}
-          setToast={setToast}
-          setIsToast={setIsToast}
-          selectedImage={selectedImage}
-          setSelectedImage={setSelectedImage}
-          editItemDetail={editItemDetail}
-          setIsEditOpen={setIsEditOpen}
-        />
-      ) : !switchPage ? (
-        <>
-          <Header
-            setSwitchPage={setSwitchPage}
-            searchedContact={searchedContact}
-            setSearchedContact={setSearchedContact}
-          />
-          <Contacts
-            contacts={contacts}
-            setContacts={setContacts}
-            contactsBasedOnSearch={contactsBasedOnSearch}
-            onDelete={deleteHandler}
-            editHandler={editHandler}
-          />
-        </>
-      ) : (
-        <CreateContact
-          contacts={contacts}
-          setContacts={setContacts}
-          setSwitchPage={setSwitchPage}
-          setToast={setToast}
-          setIsToast={setIsToast}
-          selectedImage={selectedImage}
-          setSelectedImage={setSelectedImage}
-        />
-      )}
-      <Toast
-        toast={toast}
-        setToast={setToast}
-        isToast={isToast}
-        setIsToast={setIsToast}
-        selectedImage={selectedImage}
-      />
-    </div>
+    <MainContext.Provider
+      value={{
+        contacts,
+        setContacts,
+        setSwitchPage,
+        setToast,
+        setIsToast,
+        selectedImage,
+        setSelectedImage,
+        editItemDetail,
+        setIsEditOpen,
+        searchedContact,
+        setSearchedContact,
+        toast,
+        isToast,
+        contactsBasedOnSearch,
+        editHandler,
+        deleteHandler,
+      }}
+    >
+      <div className="container">
+        {isEditOpen ? (
+          <EditPage />
+        ) : !switchPage ? (
+          <>
+            <Header />
+            <Contacts />
+          </>
+        ) : (
+          <CreateContact />
+        )}
+      </div>
+      <Toast />
+    </MainContext.Provider>
   );
 }
 

@@ -9,7 +9,8 @@
   font-weight: 500;
   font-size: 1rem;
   width: 0;
-  background-color: #eaeaec;
+  background-color: rgb(24, 49, 83);
+  color: #eaeaec;
   border-radius: 15px;
   padding: 0;
   position: absolute;

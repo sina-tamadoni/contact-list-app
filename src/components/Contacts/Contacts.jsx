@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import "./Contacts.css";
-import phoneBook from "../assets/images/PhoneBook.png";
+import phoneBook from "../../assets/images/PhoneBook.png";
+import { MainContext } from "../../App";
 
-function Contacts({
-  contacts,
-  setContacts,
-  contactsBasedOnSearch,
-  onDelete,
-  editHandler,
-}) {
+const ContactContext = createContext();
+
+function Contacts() {
+  const { contacts, setContacts, contactsBasedOnSearch } =
+    useContext(MainContext);
   const [isOpen, setIsOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(null);
   const [showSelectItem, setshowSelectItem] = useState(false);
@@ -52,73 +51,72 @@ function Contacts({
         setSelectedItems([]);
     }
   }, [isSelectedAll]);
+  useEffect(() => {
+    setIsOpen(true);
+  }, [contacts]);
 
   return (
-    <div className="contacts-container">
-      <div
-        className={`contacts-container__title ${
-          isOpen && "contacts-container__title__expanded"
-        }`}
-        onClick={() => setIsOpen((prevIsOpen) => !prevIsOpen)}
-      >
-        <h4>Contacts</h4>
-        <svg
-          data-slot="icon"
-          fill="none"
-          strokeWidth="1.5"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-          style={{
-            transition: "all 0.2s",
-            rotate: isOpen ? "180deg" : "0deg",
-          }}
+    <ContactContext.Provider
+      value={{
+        contacts,
+        closeSelectedItemsHandler,
+        showSelectItem,
+        setshowSelectItem,
+        selectedItems,
+        deleteHandler,
+        selectHandler,
+        selectAllHandler,
+        contactOpen,
+        setContactOpen,
+      }}
+    >
+      <div className="contacts-container">
+        <div
+          className={`contacts-container__title ${
+            isOpen && "contacts-container__title__expanded"
+          }`}
+          onClick={() => setIsOpen((prevIsOpen) => !prevIsOpen)}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m19.5 8.25-7.5 7.5-7.5-7.5"
-          ></path>
-        </svg>
-      </div>
+          <h4>Contacts</h4>
+          <svg
+            data-slot="icon"
+            fill="none"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            style={{
+              transition: "all 0.2s",
+              rotate: isOpen ? "180deg" : "0deg",
+            }}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m19.5 8.25-7.5 7.5-7.5-7.5"
+            ></path>
+          </svg>
+        </div>
 
-      <div
-        className={`contacts-container__content ${
-          isOpen && "contacts-container__content__expanded"
-        }`}
-      >
-        {!contacts.length ? (
-          <EmptyList />
-        ) : (
-          <div>
-            <Select
-              contacts={contacts}
-              closeSelectedItemsHandler={closeSelectedItemsHandler}
-              showSelectItem={showSelectItem}
-              setshowSelectItem={setshowSelectItem}
-              selectedItems={selectedItems}
-              deleteHandler={deleteHandler}
-              selectAllHandler={selectAllHandler}
-            />
-            {sortedContacts.map((contact) => {
-              return (
-                <Contact
-                  contact={contact}
-                  key={contact.id}
-                  contactOpen={contactOpen}
-                  setContactOpen={setContactOpen}
-                  onDelete={onDelete}
-                  editHandler={editHandler}
-                  showSelectItem={showSelectItem}
-                  selectHandler={selectHandler}
-                />
-              );
-            })}
-          </div>
-        )}
+        <div
+          className={`contacts-container__content ${
+            isOpen && "contacts-container__content__expanded"
+          }`}
+        >
+          {!contacts.length ? (
+            <EmptyList />
+          ) : (
+            <div>
+              <Select />
+              {sortedContacts.map((contact) => {
+                return <Contact contact={contact} key={contact.id} />;
+              })}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </ContactContext.Provider>
   );
 }
 export default Contacts;
@@ -134,15 +132,9 @@ function EmptyList() {
   );
 }
 
-function Contact({
-  contact,
-  contactOpen,
-  setContactOpen,
-  onDelete,
-  editHandler,
-  showSelectItem,
-  selectHandler,
-}) {
+function Contact({ contact }) {
+  const { contactOpen, setContactOpen, showSelectItem, selectHandler } =
+    useContext(ContactContext);
   const isOpen = contact.id === contactOpen;
   return (
     <div className="contact-container">
@@ -194,18 +186,13 @@ function Contact({
           ></path>
         </svg>
       </div>
-      <ContactDetails
-        contactOpen={contactOpen}
-        contact={contact}
-        isOpen={isOpen}
-        onDelete={onDelete}
-        editHandler={editHandler}
-      />
+      <ContactDetails contact={contact} isOpen={isOpen} />
     </div>
   );
 }
 
-function ContactDetails({ contact, isOpen, onDelete, editHandler }) {
+function ContactDetails({ contact, isOpen }) {
+  const { deleteHandler, editHandler } = useContext(MainContext);
   return (
     <figure
       className={`contactDetails-container ${
@@ -237,7 +224,7 @@ function ContactDetails({ contact, isOpen, onDelete, editHandler }) {
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
-          onClick={() => onDelete(contact.id)}
+          onClick={() => deleteHandler(contact.id)}
         >
           <path
             strokeLinecap="round"
@@ -347,15 +334,17 @@ function ContactDetails({ contact, isOpen, onDelete, editHandler }) {
   );
 }
 
-function Select({
-  contacts,
-  closeSelectedItemsHandler,
-  showSelectItem,
-  setshowSelectItem,
-  selectedItems,
-  deleteHandler,
-  selectAllHandler,
-}) {
+function Select() {
+  const { contacts } = useContext(MainContext);
+  const {
+    closeSelectedItemsHandler,
+    showSelectItem,
+    setshowSelectItem,
+    selectedItems,
+    deleteHandler,
+    selectAllHandler,
+  } = useContext(ContactContext);
+
   return (
     contacts.length &&
     (!showSelectItem ? (
@@ -387,7 +376,7 @@ function Select({
             <svg
               data-slot="icon"
               fill="none"
-              stroke-width="1.5"
+              strokeWidth="1.5"
               stroke="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
@@ -395,8 +384,8 @@ function Select({
               onClick={deleteHandler}
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
               ></path>
             </svg>
